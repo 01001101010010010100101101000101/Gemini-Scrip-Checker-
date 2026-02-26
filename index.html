@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Clinical Risk Dashboard</title>
+    <title>Warfighter Advance - Clinical Risk Dashboard</title>
     <style>
         /* 2026 CSS Variables - Light Theme Default */
         :root {
@@ -11,8 +11,8 @@
             --container-bg: #ffffff;
             --text-color: #1e293b;
             --border-color: #e2e8f0;
-            --primary-color: #0f172a;
-            --secondary-accent: #3b82f6;
+            --primary-color: #0f172a; /* Updated to align with branding */
+            --secondary-accent: #800000; /* Warfighter Maroon */
             --severe-color: #ef4444;
             --moderate-color: #f97316;
             --minor-color: #eab308;
@@ -24,22 +24,22 @@
             --clinical-text: #64748b;
         }
 
-        /* 2026 CSS Variables - Native Dark Mode Support */
+        /* Native Dark Mode Support */
         @media (prefers-color-scheme: dark) {
             :root {
                 --bg-color: #0f172a;
                 --container-bg: #1e293b;
                 --text-color: #f8fafc;
                 --border-color: #334155;
-                --primary-color: #38bdf8;
-                --secondary-accent: #60a5fa;
+                --primary-color: #f8fafc; 
+                --secondary-accent: #ef4444; 
                 --severe-color: #f87171;
                 --moderate-color: #fb923c;
                 --minor-color: #facc15;
                 --severe-bg: #451a1a;
                 --moderate-bg: #432414;
                 --minor-bg: #423610;
-                --button-hover: #0284c7;
+                --button-hover: #475569;
                 --clinical-bg: #0f172a;
                 --clinical-text: #94a3b8;
             }
@@ -67,7 +67,27 @@
             transition: background-color 0.3s;
         }
 
-        h1 { text-align: center; color: var(--primary-color); margin-top: 0; font-weight: 800; letter-spacing: -0.025em; }
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            height: auto;
+            max-height: 100px; /* Keeps the logo cleanly proportioned */
+        }
+
+        /* In dark mode, add a subtle background if the logo has dark text */
+        @media (prefers-color-scheme: dark) {
+            .logo-container img {
+                background-color: rgba(255, 255, 255, 0.85);
+                padding: 10px;
+                border-radius: 8px;
+            }
+        }
+
+        h1 { text-align: center; color: var(--primary-color); margin-top: 0; font-weight: 800; letter-spacing: -0.025em; font-size: 1.5em; }
         .subtitle { text-align: center; font-size: 0.95em; color: var(--clinical-text); margin-bottom: 30px; }
         
         .print-header { display: none; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--border-color); }
@@ -83,6 +103,7 @@
         input:focus { outline: none; border-color: var(--secondary-accent); }
 
         .drug-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
         .api-key-section { margin-top: 30px; padding-top: 25px; border-top: 2px dashed var(--border-color); }
 
         button {
@@ -94,8 +115,19 @@
         button:active { transform: scale(0.98); }
         button:disabled { background-color: var(--border-color); cursor: not-allowed; transform: none; }
         
-        #printBtn { background-color: var(--secondary-accent); display: none; margin-top: 15px; }
-        #printBtn:hover { background-color: #2563eb; }
+        /* Secondary Button Styling for dynamic additions */
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--border-color);
+            margin-top: 15px;
+            padding: 10px;
+            font-size: 1em;
+        }
+        .btn-secondary:hover { background-color: var(--clinical-bg); border-color: var(--primary-color); }
+
+        #printBtn { background-color: var(--secondary-accent); display: none; margin-top: 15px; color: white; }
+        #printBtn:hover { background-color: #600000; }
 
         /* Modern Progress Stepper */
         .loading-container {
@@ -103,7 +135,7 @@
             background-color: var(--clinical-bg); border-radius: 8px; border: 1px solid var(--border-color);
         }
         .spinner {
-            display: inline-block; width: 24px; height: 24px; border: 3px solid rgba(59, 130, 246, 0.3);
+            display: inline-block; width: 24px; height: 24px; border: 3px solid rgba(128, 0, 0, 0.3);
             border-radius: 50%; border-top-color: var(--secondary-accent); animation: spin 1s ease-in-out infinite; margin-bottom: 10px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -149,38 +181,37 @@
         @media print {
             body { background-color: white; color: black; }
             .container { box-shadow: none; padding: 0; max-width: 100%; border-radius: 0; }
-            .drug-inputs, .api-key-section, #checkBtn, #printBtn, .subtitle, .loading-container { display: none !important; }
+            .drug-inputs, .api-key-section, button, .subtitle, .loading-container, .btn-secondary { display: none !important; }
             .print-header { display: block; }
             #results { display: block !important; }
-            
-            /* Force background colors to print */
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            
-            /* Prevent awkward page breaks inside important containers */
             .interaction, .profile-data { page-break-inside: avoid; break-inside: avoid; }
             h3, h4 { page-break-after: avoid; break-after: avoid; }
+            .logo-container img { max-height: 80px; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <div class="logo-container">
+        <img src="Logo.jpeg" alt="Warfighter Advance Logo">
+    </div>
+
     <h1>Clinical Risk Dashboard</h1>
-    <p class="subtitle">Enter up to 6 medications to evaluate metabolic risks, teratogenic factors, and nutrient depletions.</p>
+    <p class="subtitle">Enter medications below to evaluate metabolic risks, teratogenic factors, and nutrient depletions.</p>
 
     <div class="print-header">
         <strong>Pharmacological Risk Assessment Report</strong><br>
         <span id="printTimestamp"></span>
     </div>
 
-    <div class="drug-inputs">
+    <div class="drug-inputs" id="drugInputContainer">
         <div class="form-group"><label>Drug 1</label><input type="text" class="drug-input"></div>
         <div class="form-group"><label>Drug 2</label><input type="text" class="drug-input"></div>
-        <div class="form-group"><label>Drug 3</label><input type="text" class="drug-input"></div>
-        <div class="form-group"><label>Drug 4</label><input type="text" class="drug-input"></div>
-        <div class="form-group"><label>Drug 5</label><input type="text" class="drug-input"></div>
-        <div class="form-group"><label>Drug 6</label><input type="text" class="drug-input"></div>
     </div>
+    
+    <button id="addDrugsBtn" class="btn-secondary">+ Add 2 More Medications</button>
 
     <div class="api-key-section">
         <div class="form-group">
@@ -204,6 +235,31 @@
 </div>
 
 <script>
+    // --- Dynamic DOM Injection Logic for 20 Drugs ---
+    const addDrugsBtn = document.getElementById('addDrugsBtn');
+    const drugInputContainer = document.getElementById('drugInputContainer');
+    let currentInputCount = 2;
+    const MAX_INPUTS = 20;
+
+    addDrugsBtn.addEventListener('click', () => {
+        if (currentInputCount < MAX_INPUTS) {
+            // Inject two new inputs into the grid
+            for (let i = 0; i < 2; i++) {
+                currentInputCount++;
+                const newDiv = document.createElement('div');
+                newDiv.className = 'form-group';
+                newDiv.innerHTML = `<label>Drug ${currentInputCount}</label><input type="text" class="drug-input">`;
+                drugInputContainer.appendChild(newDiv);
+            }
+            
+            // Hide the button permanently if we hit the 20 drug limit
+            if (currentInputCount >= MAX_INPUTS) {
+                addDrugsBtn.style.display = 'none';
+            }
+        }
+    });
+
+    // --- API Interaction Logic ---
     document.getElementById('checkBtn').addEventListener('click', async () => {
         const apiKey = document.getElementById('apiKey').value.trim();
         const inputs = document.querySelectorAll('.drug-input');
@@ -215,6 +271,7 @@
         const printBtn = document.getElementById('printBtn');
 
         let drugs = [];
+        // Dynamically scans however many inputs are currently on the screen
         inputs.forEach(input => {
             if (input.value.trim() !== "") drugs.push(input.value.trim());
         });
@@ -332,9 +389,7 @@ Format as:
         }
     });
 
-    // Handle Print / PDF functionality
     document.getElementById('printBtn').addEventListener('click', () => {
-        // Stamp the current date and time for the clinical record
         const now = new Date();
         document.getElementById('printTimestamp').innerText = "Generated: " + now.toLocaleString();
         window.print();
