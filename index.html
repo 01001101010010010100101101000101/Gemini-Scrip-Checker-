@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Warfighter Advance - Clinical Risk Dashboard</title>
     <style>
-        /* 2026 CSS Variables - Light Theme Default */
+        /* Light Theme Default */
         :root {
             --bg-color: #f8fafc;
             --container-bg: #ffffff;
             --text-color: #1e293b;
             --border-color: #e2e8f0;
-            --primary-color: #0f172a; /* Updated to align with branding */
+            --primary-color: #0f172a; 
             --secondary-accent: #800000; /* Warfighter Maroon */
             --severe-color: #ef4444;
             --moderate-color: #f97316;
@@ -67,6 +67,7 @@
             transition: background-color 0.3s;
         }
 
+        /* Branding Section */
         .logo-container {
             text-align: center;
             margin-bottom: 20px;
@@ -75,10 +76,9 @@
         .logo-container img {
             max-width: 100%;
             height: auto;
-            max-height: 100px; /* Keeps the logo cleanly proportioned */
+            max-height: 100px;
         }
 
-        /* In dark mode, add a subtle background if the logo has dark text */
         @media (prefers-color-scheme: dark) {
             .logo-container img {
                 background-color: rgba(255, 255, 255, 0.85);
@@ -115,7 +115,6 @@
         button:active { transform: scale(0.98); }
         button:disabled { background-color: var(--border-color); cursor: not-allowed; transform: none; }
         
-        /* Secondary Button Styling for dynamic additions */
         .btn-secondary {
             background-color: transparent;
             color: var(--primary-color);
@@ -129,7 +128,6 @@
         #printBtn { background-color: var(--secondary-accent); display: none; margin-top: 15px; color: white; }
         #printBtn:hover { background-color: #600000; }
 
-        /* Modern Progress Stepper */
         .loading-container {
             display: none; text-align: center; margin-top: 30px; padding: 20px;
             background-color: var(--clinical-bg); border-radius: 8px; border: 1px solid var(--border-color);
@@ -155,7 +153,6 @@
         #results h4 { color: var(--primary-color); margin-bottom: 5px; margin-top: 25px; font-size: 1.15em; }
         #results ul { padding-left: 20px; }
         
-        /* Visual Connectivity Badges */
         .badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 9999px; font-size: 0.75em; font-weight: 700; margin-left: 10px; text-transform: uppercase; letter-spacing: 0.05em; vertical-align: middle; }
         .badge-severe { background-color: var(--severe-color); color: #fff; }
         .badge-moderate { background-color: var(--moderate-color); color: #fff; }
@@ -177,7 +174,6 @@
         .profile-data { background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-top: 10px; margin-bottom: 15px; }
         .profile-data li { margin-bottom: 8px; }
 
-        /* Print Specific Styling */
         @media print {
             body { background-color: white; color: black; }
             .container { box-shadow: none; padding: 0; max-width: 100%; border-radius: 0; }
@@ -195,7 +191,7 @@
 
 <div class="container">
     <div class="logo-container">
-        <img src="logo.jpeg" alt="Warfighter Advance Logo">
+        <img src="Logo.jpeg" alt="Warfighter Advance Logo">
     </div>
 
     <h1>Clinical Risk Dashboard</h1>
@@ -235,7 +231,6 @@
 </div>
 
 <script>
-    // --- Dynamic DOM Injection Logic for 20 Drugs ---
     const addDrugsBtn = document.getElementById('addDrugsBtn');
     const drugInputContainer = document.getElementById('drugInputContainer');
     let currentInputCount = 2;
@@ -243,7 +238,6 @@
 
     addDrugsBtn.addEventListener('click', () => {
         if (currentInputCount < MAX_INPUTS) {
-            // Inject two new inputs into the grid
             for (let i = 0; i < 2; i++) {
                 currentInputCount++;
                 const newDiv = document.createElement('div');
@@ -251,15 +245,12 @@
                 newDiv.innerHTML = `<label>Drug ${currentInputCount}</label><input type="text" class="drug-input">`;
                 drugInputContainer.appendChild(newDiv);
             }
-            
-            // Hide the button permanently if we hit the 20 drug limit
             if (currentInputCount >= MAX_INPUTS) {
                 addDrugsBtn.style.display = 'none';
             }
         }
     });
 
-    // --- API Interaction Logic ---
     document.getElementById('checkBtn').addEventListener('click', async () => {
         const apiKey = document.getElementById('apiKey').value.trim();
         const inputs = document.querySelectorAll('.drug-input');
@@ -271,7 +262,6 @@
         const printBtn = document.getElementById('printBtn');
 
         let drugs = [];
-        // Dynamically scans however many inputs are currently on the screen
         inputs.forEach(input => {
             if (input.value.trim() !== "") drugs.push(input.value.trim());
         });
