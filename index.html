@@ -67,140 +67,71 @@
             transition: background-color 0.3s;
         }
 
-        h1 {
-            text-align: center;
-            color: var(--primary-color);
-            margin-top: 0;
-            font-weight: 800;
-            letter-spacing: -0.025em;
-        }
-
-        .subtitle {
-            text-align: center;
-            font-size: 0.95em;
-            color: var(--clinical-text);
-            margin-bottom: 30px;
-        }
+        h1 { text-align: center; color: var(--primary-color); margin-top: 0; font-weight: 800; letter-spacing: -0.025em; }
+        .subtitle { text-align: center; font-size: 0.95em; color: var(--clinical-text); margin-bottom: 30px; }
+        
+        .print-header { display: none; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--border-color); }
 
         .form-group { margin-bottom: 15px; }
         label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9em; }
         
         input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 1em;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;
+            box-sizing: border-box; font-size: 1em; background-color: var(--bg-color); color: var(--text-color);
             transition: border-color 0.2s;
         }
         input:focus { outline: none; border-color: var(--secondary-accent); }
 
         .drug-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-
-        .api-key-section {
-            margin-top: 30px;
-            padding-top: 25px;
-            border-top: 2px dashed var(--border-color);
-        }
+        .api-key-section { margin-top: 30px; padding-top: 25px; border-top: 2px dashed var(--border-color); }
 
         button {
-            width: 100%;
-            padding: 14px;
-            background-color: var(--primary-color);
-            color: var(--container-bg);
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 25px;
-            transition: transform 0.1s, background-color 0.3s;
+            width: 100%; padding: 14px; background-color: var(--primary-color); color: var(--container-bg);
+            border: none; border-radius: 8px; font-size: 1.1em; font-weight: 600; cursor: pointer;
+            margin-top: 25px; transition: transform 0.1s, background-color 0.3s;
         }
         button:hover { background-color: var(--button-hover); }
         button:active { transform: scale(0.98); }
         button:disabled { background-color: var(--border-color); cursor: not-allowed; transform: none; }
+        
+        #printBtn { background-color: var(--secondary-accent); display: none; margin-top: 15px; }
+        #printBtn:hover { background-color: #2563eb; }
 
         /* Modern Progress Stepper */
         .loading-container {
-            display: none;
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            background-color: var(--clinical-bg);
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
+            display: none; text-align: center; margin-top: 30px; padding: 20px;
+            background-color: var(--clinical-bg); border-radius: 8px; border: 1px solid var(--border-color);
         }
         .spinner {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            border: 3px solid rgba(59, 130, 246, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--secondary-accent);
-            animation: spin 1s ease-in-out infinite;
-            margin-bottom: 10px;
+            display: inline-block; width: 24px; height: 24px; border: 3px solid rgba(59, 130, 246, 0.3);
+            border-radius: 50%; border-top-color: var(--secondary-accent); animation: spin 1s ease-in-out infinite; margin-bottom: 10px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         #stepText { font-weight: 600; color: var(--secondary-accent); }
 
         #actionBanner {
-            display: none;
-            background-color: var(--severe-color);
-            color: #ffffff;
-            padding: 16px;
-            text-align: center;
-            font-weight: bold;
-            border-radius: 8px;
-            margin-top: 25px;
-            font-size: 1.1em;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
-            animation: pulse 2s infinite;
+            display: none; background-color: var(--severe-color); color: #ffffff; padding: 16px; text-align: center;
+            font-weight: bold; border-radius: 8px; margin-top: 25px; font-size: 1.1em;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); animation: pulse 2s infinite;
         }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.015); } 100% { transform: scale(1); } }
 
         #results { margin-top: 25px; display: none; }
         
-        /* Clinical Output Formatting */
-        #results h3 { 
-            color: var(--primary-color); 
-            border-bottom: 2px solid var(--border-color); 
-            padding-bottom: 8px; 
-            margin-top: 40px;
-            font-weight: 700;
-        }
+        #results h3 { color: var(--primary-color); border-bottom: 2px solid var(--border-color); padding-bottom: 8px; margin-top: 40px; font-weight: 700; }
         #results h3:first-child { margin-top: 0; }
         #results h4 { color: var(--primary-color); margin-bottom: 5px; margin-top: 25px; font-size: 1.15em; }
         #results ul { padding-left: 20px; }
         
-        /* Option A: Visual Connectivity Badges */
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 4px 10px;
-            border-radius: 9999px;
-            font-size: 0.75em;
-            font-weight: 700;
-            margin-left: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            vertical-align: middle;
-        }
+        /* Visual Connectivity Badges */
+        .badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 9999px; font-size: 0.75em; font-weight: 700; margin-left: 10px; text-transform: uppercase; letter-spacing: 0.05em; vertical-align: middle; }
         .badge-severe { background-color: var(--severe-color); color: #fff; }
         .badge-moderate { background-color: var(--moderate-color); color: #fff; }
         .badge-minor { background-color: var(--minor-color); color: #000; }
         .badge-pair { background-color: var(--border-color); color: var(--text-color); border: 1px solid var(--text-color); }
         .badge-poly { background-color: var(--primary-color); color: var(--container-bg); }
 
-        .interaction {
-            padding: 20px;
-            margin-bottom: 16px;
-            border-radius: 12px;
-            border-left: 6px solid;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
+        .interaction { padding: 20px; margin-bottom: 16px; border-radius: 12px; border-left: 6px solid; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .risk-severe { border-color: var(--severe-color); background-color: var(--severe-bg); }
         .risk-moderate { border-color: var(--moderate-color); background-color: var(--moderate-bg); }
         .risk-minor { border-color: var(--minor-color); background-color: var(--minor-bg); }
@@ -208,32 +139,27 @@
         .risk-header { display: flex; align-items: center; flex-wrap: wrap; margin-bottom: 12px; gap: 8px; }
         .risk-title { font-weight: 800; font-size: 1.2em; color: var(--text-color); }
         
-        .clinical { 
-            display: block;
-            font-size: 0.85em;
-            color: var(--clinical-text); 
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-            margin-bottom: 12px;
-            background-color: var(--clinical-bg);
-            padding: 6px 10px;
-            border-radius: 6px;
-        }
-        .eli16 { 
-            display: block;
-            font-size: 1.1em;
-            color: var(--text-color); 
-            font-weight: 500;
-        }
+        .clinical { display: block; font-size: 0.85em; color: var(--clinical-text); font-family: ui-monospace, SFMono-Regular, monospace; margin-bottom: 12px; background-color: var(--clinical-bg); padding: 6px 10px; border-radius: 6px; }
+        .eli16 { display: block; font-size: 1.1em; color: var(--text-color); font-weight: 500; }
 
-        .profile-data {
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 16px;
-            margin-top: 10px;
-            margin-bottom: 15px;
-        }
+        .profile-data { background-color: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; margin-top: 10px; margin-bottom: 15px; }
         .profile-data li { margin-bottom: 8px; }
+
+        /* Print Specific Styling */
+        @media print {
+            body { background-color: white; color: black; }
+            .container { box-shadow: none; padding: 0; max-width: 100%; border-radius: 0; }
+            .drug-inputs, .api-key-section, #checkBtn, #printBtn, .subtitle, .loading-container { display: none !important; }
+            .print-header { display: block; }
+            #results { display: block !important; }
+            
+            /* Force background colors to print */
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            
+            /* Prevent awkward page breaks inside important containers */
+            .interaction, .profile-data { page-break-inside: avoid; break-inside: avoid; }
+            h3, h4 { page-break-after: avoid; break-after: avoid; }
+        }
     </style>
 </head>
 <body>
@@ -241,6 +167,11 @@
 <div class="container">
     <h1>Clinical Risk Dashboard</h1>
     <p class="subtitle">Enter up to 6 medications to evaluate metabolic risks, teratogenic factors, and nutrient depletions.</p>
+
+    <div class="print-header">
+        <strong>Pharmacological Risk Assessment Report</strong><br>
+        <span id="printTimestamp"></span>
+    </div>
 
     <div class="drug-inputs">
         <div class="form-group"><label>Drug 1</label><input type="text" class="drug-input"></div>
@@ -268,6 +199,8 @@
     <div id="actionBanner">⚠️ SEVERE RISKS DETECTED: We strongly advise consulting a pharmacist or physician.</div>
     
     <div id="results"></div>
+    
+    <button id="printBtn">🖨️ Print / Save PDF Report</button>
 </div>
 
 <script>
@@ -279,6 +212,7 @@
         const stepText = document.getElementById('stepText');
         const actionBanner = document.getElementById('actionBanner');
         const btn = document.getElementById('checkBtn');
+        const printBtn = document.getElementById('printBtn');
 
         let drugs = [];
         inputs.forEach(input => {
@@ -291,9 +225,9 @@
         btn.disabled = true;
         resultsDiv.style.display = 'none';
         actionBanner.style.display = 'none'; 
+        printBtn.style.display = 'none';
         loadingIndicator.style.display = 'block';
 
-        // Stepper Logic
         const steps = [
             "Standardizing nomenclature and salt variations...",
             "Mapping CYP450 enzyme pathways...",
@@ -382,6 +316,7 @@ Format as:
 
             resultsDiv.innerHTML = cleanHTML;
             resultsDiv.style.display = 'block';
+            printBtn.style.display = 'block';
 
             if (cleanHTML.includes('risk-severe')) {
                 actionBanner.style.display = 'block';
@@ -395,6 +330,14 @@ Format as:
             loadingIndicator.style.display = 'none';
             btn.disabled = false;
         }
+    });
+
+    // Handle Print / PDF functionality
+    document.getElementById('printBtn').addEventListener('click', () => {
+        // Stamp the current date and time for the clinical record
+        const now = new Date();
+        document.getElementById('printTimestamp').innerText = "Generated: " + now.toLocaleString();
+        window.print();
     });
 </script>
 
