@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Clinical Risk Checker</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6;
+            --container-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #cccccc;
+            --primary-color: #2c3e50;
+            --severe-color: #e74c3c;
+            --moderate-color: #e67e22;
+            --minor-color: #f1c40f;
+            --severe-bg: #fceceb;
+            --moderate-bg: #fdf2e9;
+            --minor-bg: #fef9e7;
+            --button-hover: #34495e;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            background-color: var(--container-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 750px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+
+        .drug-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .api-key-section {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px dashed var(--border-color);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--button-hover);
+        }
+
+        button:disabled {
+            background-color: var(--border-color);
+            cursor: not-allowed;
+        }
+
+        #results {
+            margin-top: 25px;
+            padding: 25px;
+            border-radius: 5px;
+            display: none;
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+        }
+
+        .loading {
+            text-align: center;
+            font-style: italic;
+            color: #666;
+            display: none;
+            margin-top: 20px;
+        }
+
+        /* Nudge C: The Action Banner */
+        #actionBanner {
+            display: none;
+            background-color: var(--severe-color);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 1.1em;
+            box-shadow: 0 4px 6px rgba(231, 76, 60, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Clinical Output Formatting */
+        #results h3 { 
+            color: var(--primary-color); 
+            border-bottom: 2px solid var(--border-color); 
+            padding-bottom: 5px; 
+            margin-top: 35px;
+        }
+        #results h3:first-child { margin-top: 0; }
+        #results h4 { color: var(--primary-color); margin-bottom: 5px; margin-top: 20px; }
+        #results ul { padding-left: 20px; }
+        
+        /* Severity Color Coding */
+        .interaction {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 6px solid;
+        }
+        .risk-severe { border-color: var(--severe-color); background-color: var(--severe-bg); }
+        .risk-moderate { border-color: var(--moderate-color); background-color: var(--moderate-bg); }
+        .risk-minor { border-color: var(--minor-color); background-color: var(--minor-bg); }
+        .risk-title { font-weight: bold; margin-bottom: 8px; font-size: 1.1em; }
+        
+        /* Nudge B: Visual Hierarchy */
+        .clinical { 
+            display: block;
+            font-size: 0.85em;
+            color: #7f8c8d; 
+            font-family: monospace;
+            margin-bottom: 10px;
+        }
+        .eli16 { 
+            display: block;
+            font-size: 1.15em;
+            color: #2c3e50; 
+            font-weight: 500;
+        }
+
+        .profile-data {
+            background-color: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 8px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Clinical Risk Checker</h1>
+    <p style="text-align: center; font-size: 0.9em; color: #666;">Enter up to 6 medications to evaluate metabolic risks, deep nutrient depletions, and clinical profiles.</p>
+
+    <div class="drug-inputs">
+        <div class="form-group"><label>Drug 1</label><input type="text" class="drug-input"></div>
+        <div class="form-group"><label>Drug 2</label><input type="text" class="drug-input"></div>
+        <div class="form-group"><label>Drug 3</label><input type="text" class="drug-input"></div>
+        <div class="form-group"><label>Drug 4</label><input type="text" class="drug-input"></div>
+        <div class="form-group"><label>Drug 5</label><input type="text" class="drug-input"></div>
+        <div class="form-group"><label>Drug 6</label><input type="text" class="drug-input"></div>
+    </div>
+
+    <div class="api-key-section">
+        <div class="form-group">
+            <label for="apiKey">Gemini API Key</label>
+            <input type="password" id="apiKey" placeholder="Enter your Google Gemini API Key">
+        </div>
+    </div>
+
+    <button id="checkBtn">Analyze Pharmacological Risks</button>
+
+    <div class="loading" id="loadingIndicator">Analyzing authoritative clinical data, mapping deep nutrient depletions, and generating ELI16 translations...</div>
+    
+    <div id="actionBanner">⚠️ SEVERE RISKS DETECTED: We strongly advise consulting a pharmacist or physician before combining these medications.</div>
+    
+    <div id="results"></div>
+</div>
+
+<script>
+    document.getElementById('checkBtn').addEventListener('click', async () => {
+        const apiKey = document.getElementById('apiKey').value.trim();
+        const inputs = document.querySelectorAll('.drug-input');
+        const resultsDiv = document.getElementById('results');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const actionBanner = document.getElementById('actionBanner');
+        const btn = document.getElementById('checkBtn');
+
+        let drugs = [];
+        inputs.forEach(input => {
+            if (input.value.trim() !== "") {
+                drugs.push(input.value.trim());
+            }
+        });
+
+        if (drugs.length < 2) {
+            alert("Please enter at least two medications.");
+            return;
+        }
+        if (!apiKey) {
+            alert("Please enter your Gemini API Key.");
+            return;
+        }
+
+        btn.disabled = true;
+        resultsDiv.style.display = 'none';
+        actionBanner.style.display = 'none'; 
+        loadingIndicator.style.display = 'block';
+
+        const systemPrompt = `You are a strict pharmacological analysis system. 
+Analyze the following list of drugs: ${drugs.join(', ')}.
+
+CRITICAL INSTRUCTIONS:
+1. Standardize all naming versions and variations.
+2. Identify ALL known negative interaction risks (Pairwise and Polypharmacy). Ignore safe combinations.
+3. Classify every interaction as Severe, Moderate, or Minor.
+4. TRANSLATION RULE: Whenever you describe a symptom, risk, or nutrient depletion in the ELI16, Profile, or Depletion sections, you MUST translate secondary medical jargon into physical sensations. Do NOT just output "akathisia", "orthostatic hypotension", "QT prolongation", or "magnesium depletion". You must describe exactly what the patient will physically feel (e.g., "an intense, uncontrollable inner restlessness", "a severe head rush and dizziness when standing up", "muscle cramps and eye twitches"). Zero jargon is allowed in the patient-facing explanations.
+5. Structure your entire response EXACTLY using the following SIX HTML headings. Do not deviate:
+
+<h3>1. Analyzed Drugs</h3>
+<ul>(List the standardized generic names)</ul>
+
+<h3>2. Pairwise Interactions</h3>
+(List negative risks between any 2 drugs. If none, state "No known negative pairwise interactions.")
+For EVERY interaction, wrap it in a div matching its severity:
+<div class="interaction risk-severe"> (or risk-moderate, or risk-minor)
+    <div class="risk-title">[Drug A] + [Drug B]</div>
+    <div class="clinical">Mechanism: [Formal clinical mechanism]</div>
+    <div class="eli16">Real-World Risk: [Plain-English explanation of the physical sensations and risks, translating all jargon]</div>
+</div>
+
+<h3>3. Polypharmacy Cascades</h3>
+(List complex risks between 3 or more drugs. If none, state "No known polypharmacy cascades.")
+For EVERY interaction, wrap it in a severity div exactly like the pairwise interactions.
+
+<h3>4. Drug-Specific Clinical Profiles</h3>
+(For EACH drug, provide:
+<h4>Drug Name</h4>
+<div class="profile-data">
+<ul>
+<li><strong>Patient Risk Factors:</strong> (Renal/hepatic, age, etc. Translated to plain English)</li>
+<li><strong>Dosage-Dependent Warnings:</strong> (Toxicity thresholds. Translated to plain English)</li>
+<li><strong>Tapering & Withdrawal:</strong> (Clinical guidelines, no calendar schedules. Describe the physical withdrawal symptoms in plain English)</li>
+</ul>
+</div>)
+
+<h3>5. Nutrient & Mineral Depletions</h3>
+(For EACH drug, you MUST cross-reference your internal knowledge against the "Drug-Induced Nutrient Depletion Handbook" by Ross Pelton and the "Natural Medicines Comprehensive Database" to find ALL known major and minor drug-induced nutrient or mineral depletions. If absolutely none exist, state "No known significant depletions.")
+Format each depletion as:
+<div class="profile-data">
+<strong>[Drug Name]:</strong> Depletes [Nutrient]. <span class="eli16" style="display:inline-block; margin-top:5px;">This can cause physical symptoms like [Plain-English physical sensations].</span>
+</div>
+
+<h3>6. Reference Literature</h3>
+<ul>(List 2-4 general clinical reference sources used. No URLs.)</ul>
+
+6. Format in pure HTML. DO NOT use Markdown backticks (\`\`\`).`;
+
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+        const payload = {
+            contents: [{ parts: [{ text: systemPrompt }] }],
+            generationConfig: { temperature: 0.1 }
+        };
+
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const errData = await response.json();
+                throw new Error(errData.error?.message || "API Request Failed");
+            }
+
+            const data = await response.json();
+            const aiText = data.candidates[0].content.parts[0].text;
+            const cleanHTML = aiText.replace(/```html/gi, '').replace(/```/g, '').trim();
+
+            resultsDiv.innerHTML = cleanHTML;
+            resultsDiv.style.display = 'block';
+
+            if (cleanHTML.includes('risk-severe')) {
+                actionBanner.style.display = 'block';
+            }
+
+        } catch (error) {
+            resultsDiv.innerHTML = `<h3>Error</h3><p style="color: red;">${error.message}</p>`;
+            resultsDiv.style.display = 'block';
+        } finally {
+            loadingIndicator.style.display = 'none';
+            btn.disabled = false;
+        }
+    });
+</script>
+
+</body>
+</html>
