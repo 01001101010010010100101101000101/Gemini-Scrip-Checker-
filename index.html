@@ -12,7 +12,7 @@
             --text-color: #1e293b;
             --border-color: #e2e8f0;
             --primary-color: #0f172a; 
-            --secondary-accent: #800000; /* Maroon accent */
+            --secondary-accent: #800000;
             --severe-color: #ef4444;
             --moderate-color: #f97316;
             --minor-color: #eab308;
@@ -251,9 +251,9 @@
         loadingIndicator.style.display = 'block';
 
         const steps = [
-            "Standardizing nomenclature and salt variations...",
+            "Actively querying live clinical databases...",
             "Mapping CYP450 enzyme pathways...",
-            "Cross-referencing authoritative databases...",
+            "Searching Ross Pelton's depletion records...",
             "Analyzing teratogenic and lifestyle risks...",
             "Translating clinical jargon to plain English..."
         ];
@@ -262,9 +262,9 @@
         const stepInterval = setInterval(() => {
             stepIdx++;
             if(stepIdx < steps.length) stepText.innerText = steps[stepIdx];
-        }, 1800);
+        }, 2200);
 
-        const systemPrompt = `You are a strict pharmacological analysis system. 
+        const systemPrompt = `You are a strict pharmacological analysis system equipped with live search. 
 Analyze the following list of drugs: ${drugs.join(', ')}.
 
 CRITICAL INSTRUCTIONS:
@@ -309,9 +309,9 @@ Format exactly like Pairwise, but use <span class="badge badge-poly">🧬 Polyph
 (List severe or moderate interactions with grapefruit, alcohol, smoking, vitamin K, etc. Format as an unordered list).
 
 <h3>6. Nutrient & Mineral Depletions</h3>
-(You MUST cross-reference your internal knowledge against the "Drug-Induced Nutrient Depletion Handbook" by Ross Pelton and the "Natural Medicines Comprehensive Database". Evaluate EACH drug individually. Do not skip any drugs. 
-STRICT RULE: You must explicitly cite Pelton's Handbook for every single drug. If a drug is not in the book or has no known depletions, you MUST explicitly write: 'No depletion data found in Pelton's Handbook' rather than skipping it. 
-List ALL major and minor drug-induced nutrient depletions, including gut flora, CoQ10, vitamins, and trace minerals.)
+(STRICT RULE: You MUST use your search tool to actively look up "[Drug Name] Ross Pelton nutrient depletion" or check the Natural Medicines Comprehensive Database for EVERY SINGLE DRUG. Do not skip any drugs. 
+List ALL major and minor drug-induced nutrient depletions, including gut flora, CoQ10, vitamins, and trace minerals. 
+If a drug truly has no known depletions after searching, you MUST explicitly write: 'No depletion data found in Pelton's Handbook or searched databases' rather than skipping it.)
 Format each drug's output EXACTLY like this:
 <div class="profile-data">
 <strong>[Drug Name]:</strong>
@@ -322,12 +322,18 @@ Format each drug's output EXACTLY like this:
 </div>
 
 <h3>7. Reference Literature</h3>
-<ul>(List 2-4 general clinical reference sources used. No URLs.)</ul>
+<ul>(List the actual clinical reference sources used. Because you used search grounding, you MUST list "Ross Pelton: Drug-Induced Nutrient Depletion Handbook" and/or the specific URLs you searched to find the depletion data.)</ul>
 
 5. Format in pure HTML. DO NOT use Markdown backticks (\`\`\`).`;
 
         const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-        const payload = { contents: [{ parts: [{ text: systemPrompt }] }], generationConfig: { temperature: 0.1 } };
+        
+        // Added the googleSearch tool to the payload to enable active grounding
+        const payload = { 
+            contents: [{ parts: [{ text: systemPrompt }] }], 
+            tools: [{ googleSearch: {} }],
+            generationConfig: { temperature: 0.1 } 
+        };
 
         try {
             const response = await fetch(endpoint, {
@@ -342,7 +348,11 @@ Format each drug's output EXACTLY like this:
             }
 
             const data = await response.json();
-            const cleanHTML = data.candidates[0].content.parts[0].text.replace(/```html/gi, '').replace(/```/g, '').trim();
+            
+            // Extract text from the grounded response
+            const responsePart = data.candidates[0].content.parts.find(part => part.text);
+            const rawText = responsePart ? responsePart.text : "";
+            const cleanHTML = rawText.replace(/```html/gi, '').replace(/```/g, '').trim();
 
             resultsDiv.innerHTML = cleanHTML;
             resultsDiv.style.display = 'block';
