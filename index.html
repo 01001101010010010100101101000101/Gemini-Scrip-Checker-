@@ -12,7 +12,7 @@
             --text-color: #1e293b;
             --border-color: #e2e8f0;
             --primary-color: #0f172a; 
-            --secondary-accent: #800000;
+            --secondary-accent: #800000; /* Maroon accent */
             --severe-color: #ef4444;
             --moderate-color: #f97316;
             --minor-color: #eab308;
@@ -251,9 +251,9 @@
         loadingIndicator.style.display = 'block';
 
         const steps = [
-            "Actively querying live clinical databases...",
+            "Standardizing nomenclature and salt variations...",
             "Mapping CYP450 enzyme pathways...",
-            "Searching Ross Pelton's depletion records...",
+            "Cross-referencing authoritative databases...",
             "Analyzing teratogenic and lifestyle risks...",
             "Translating clinical jargon to plain English..."
         ];
@@ -262,16 +262,17 @@
         const stepInterval = setInterval(() => {
             stepIdx++;
             if(stepIdx < steps.length) stepText.innerText = steps[stepIdx];
-        }, 2200);
+        }, 1800);
 
-        const systemPrompt = `You are a strict pharmacological analysis system equipped with live search. 
+        const systemPrompt = `You are a strict pharmacological analysis system. 
 Analyze the following list of drugs: ${drugs.join(', ')}.
 
 CRITICAL INSTRUCTIONS:
 1. Standardize all naming versions.
-2. TRANSLATION RULE: You MUST translate secondary medical jargon (e.g., "akathisia", "teratogenic", "orthostatic hypotension") into physical, plain-English sensations or explanations across all sections. Zero jargon allowed in patient explanations.
-3. Classify every interaction as Severe, Moderate, or Minor.
-4. Structure your response EXACTLY using the following SEVEN HTML headings:
+2. NUTRITIONAL MANDATE: You must ALSO and ALWAYS check the listed medications against Ross Pelton's "Drug-Induced Nutrient Depletion Handbook" and the "Natural Medicines Comprehensive Database" in your analysis.
+3. TRANSLATION RULE: You MUST translate secondary medical jargon (e.g., "akathisia", "teratogenic", "orthostatic hypotension") into physical, plain-English sensations or explanations across all sections. Zero jargon allowed in patient explanations.
+4. Classify every interaction as Severe, Moderate, or Minor.
+5. Structure your response EXACTLY using the following SEVEN HTML headings:
 
 <h3>1. Analyzed Drugs</h3>
 <ul>(List the standardized generic names)</ul>
@@ -309,31 +310,22 @@ Format exactly like Pairwise, but use <span class="badge badge-poly">🧬 Polyph
 (List severe or moderate interactions with grapefruit, alcohol, smoking, vitamin K, etc. Format as an unordered list).
 
 <h3>6. Nutrient & Mineral Depletions</h3>
-(STRICT RULE: You MUST use your search tool to actively look up "[Drug Name] Ross Pelton nutrient depletion" or check the Natural Medicines Comprehensive Database for EVERY SINGLE DRUG. Do not skip any drugs. 
-List ALL major and minor drug-induced nutrient depletions, including gut flora, CoQ10, vitamins, and trace minerals. 
-If a drug truly has no known depletions after searching, you MUST explicitly write: 'No depletion data found in Pelton's Handbook or searched databases' rather than skipping it.)
-Format each drug's output EXACTLY like this:
+(Based on the mandate in Rule 2, list ALL major and minor drug-induced nutrient depletions for each drug. If absolutely none exist, state "No known significant depletions.")
+Format each drug's depletions as a clean bulleted list:
 <div class="profile-data">
 <strong>[Drug Name]:</strong>
 <ul>
 <li>Depletes [Nutrient]: <span class="eli16">This can cause physical symptoms like [Plain-English physical sensations].</span></li>
 </ul>
-<strong>[Drug Name]:</strong> No depletion data found in Pelton's Handbook.
 </div>
 
 <h3>7. Reference Literature</h3>
-<ul>(List the actual clinical reference sources used. Because you used search grounding, you MUST list "Ross Pelton: Drug-Induced Nutrient Depletion Handbook" and/or the specific URLs you searched to find the depletion data.)</ul>
+<ul>(List 2-4 general clinical reference sources used. If you found depletions, you MUST list Pelton's Handbook here. No URLs.)</ul>
 
-5. Format in pure HTML. DO NOT use Markdown backticks (\`\`\`).`;
+6. Format in pure HTML. DO NOT use Markdown backticks (\`\`\`).`;
 
         const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-        
-        // Added the googleSearch tool to the payload to enable active grounding
-        const payload = { 
-            contents: [{ parts: [{ text: systemPrompt }] }], 
-            tools: [{ googleSearch: {} }],
-            generationConfig: { temperature: 0.1 } 
-        };
+        const payload = { contents: [{ parts: [{ text: systemPrompt }] }], generationConfig: { temperature: 0.1 } };
 
         try {
             const response = await fetch(endpoint, {
@@ -348,11 +340,7 @@ Format each drug's output EXACTLY like this:
             }
 
             const data = await response.json();
-            
-            // Extract text from the grounded response
-            const responsePart = data.candidates[0].content.parts.find(part => part.text);
-            const rawText = responsePart ? responsePart.text : "";
-            const cleanHTML = rawText.replace(/```html/gi, '').replace(/```/g, '').trim();
+            const cleanHTML = data.candidates[0].content.parts[0].text.replace(/```html/gi, '').replace(/```/g, '').trim();
 
             resultsDiv.innerHTML = cleanHTML;
             resultsDiv.style.display = 'block';
