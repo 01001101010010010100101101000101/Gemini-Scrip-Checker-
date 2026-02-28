@@ -86,6 +86,43 @@
         
         .api-key-section { margin-top: 30px; padding-top: 25px; border-top: 2px dashed var(--border-color); }
 
+        /* Accordion Styling */
+        .api-help-accordion {
+            margin-top: 15px;
+            background-color: var(--clinical-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: background-color 0.3s;
+        }
+        .api-help-accordion summary {
+            padding: 12px 15px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9em;
+            color: var(--primary-color);
+            user-select: none;
+            outline: none;
+        }
+        .api-help-accordion summary:hover {
+            background-color: var(--border-color);
+        }
+        .accordion-content {
+            padding: 15px;
+            font-size: 0.9em;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+        .accordion-content ol {
+            margin-top: 0;
+            margin-bottom: 10px;
+            padding-left: 20px;
+        }
+        .accordion-content p {
+            margin-bottom: 0;
+            font-weight: bold;
+        }
+
         button {
             width: 100%; padding: 14px; background-color: var(--primary-color); color: var(--container-bg);
             border: none; border-radius: 8px; font-size: 1.1em; font-weight: 600; cursor: pointer;
@@ -157,7 +194,7 @@
         @media print {
             body { background-color: white; color: black; }
             .container { box-shadow: none; padding: 0; max-width: 100%; border-radius: 0; }
-            .drug-inputs, .api-key-section, button, .subtitle, .loading-container, .btn-secondary { display: none !important; }
+            .drug-inputs, .api-key-section, button, .subtitle, .loading-container, .btn-secondary, .api-help-accordion { display: none !important; }
             .print-header { display: block; }
             #results { display: block !important; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -189,6 +226,18 @@
             <label for="apiKey">Gemini API Key</label>
             <input type="password" id="apiKey" placeholder="Enter your Google Gemini API Key">
         </div>
+        
+        <details class="api-help-accordion">
+            <summary>How to get a free Gemini API key</summary>
+            <div class="accordion-content">
+                <ol>
+                    <li>Go to aistudio.google.com and sign in with your Google account.</li>
+                    <li>Click "Get API Key" in the left sidebar, then click "Create API key."</li>
+                    <li>Copy the key and save it somewhere safe — you won't be able to see it again after you leave the page.</li>
+                </ol>
+                <p>That's it. You're done.</p>
+            </div>
+        </details>
     </div>
 
     <button id="checkBtn">Analyze Pharmacological Data</button>
